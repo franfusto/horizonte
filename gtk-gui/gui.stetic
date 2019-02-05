@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+    <target-gtk-version>2.12</target-gtk-version>
+  </configuration>
+  <import>
+    <widget-library name="../bin/Debug/horizonte.dll" internal="true" />
+  </import>
+  <icon-factory>
+    <icon-set id="Wait">
+      <source>
+        <property name="Image">resource:horizonte.espere.gif</property>
+      </source>
+    </icon-set>
+  </icon-factory>
+</stetic-interface>
