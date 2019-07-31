@@ -136,8 +136,10 @@ namespace horizonte
 		{
 			try {
 				//general 
-				if (File.Exists (GeneralConfigFile))
+				if (!File.Exists (GeneralConfigFile))
 				{
+					CreateFile (GeneralConfigFile);
+				}
 					GeneralDataSet.Clear();
 					GeneralDataSet.ReadXml(GeneralConfigFile);
 					GeneralConfigTable = GeneralDataSet.Tables["General"];
@@ -148,39 +150,34 @@ namespace horizonte
 						GeneralConfigTable.PrimaryKey = DcKey;
 						GeneralConfigTable.DefaultView.Sort = DcKey[0].ColumnName;
 					}
-				}else{
-					CreateFile (GeneralConfigFile);
-				}
 				if (!OnlyGeneral)
 				{
 					
 					// machine
-					if (File.Exists (MachineConfigFile))
+					if (!File.Exists (MachineConfigFile))
 					{
+						CreateMachineConfigFile ();
+					}
 						MachineDataSet.Clear();
 						MachineDataSet.ReadXml(MachineConfigFile);
 						MachineConfigTable = MachineDataSet.Tables["General"];
-						DataColumn[] DcKey = new DataColumn[1];
-						DcKey[0] = MachineConfigTable.Columns[0];
-						MachineConfigTable.PrimaryKey = DcKey;
-						MachineConfigTable.DefaultView.Sort = DcKey[0].ColumnName;
-					}else{
-						CreateMachineConfigFile ();
-					}
+						DataColumn[] DcKeyma = new DataColumn[1];
+						DcKeyma[0] = MachineConfigTable.Columns[0];
+						MachineConfigTable.PrimaryKey = DcKeyma;
+						MachineConfigTable.DefaultView.Sort = DcKeyma[0].ColumnName;
 					
 					//user
-					if (File.Exists (UserConfigFile))
+					if (!File.Exists (UserConfigFile))
 					{
+						CreateUserConfigFile ();
+					}
 						UserDataSet.Clear();
 						UserDataSet.ReadXml(UserConfigFile);
 						UserConfigTable = UserDataSet.Tables["General"];
-						DataColumn[] DcKey = new DataColumn[1];
-						DcKey[0] =UserConfigTable.Columns[0];
-						UserConfigTable.PrimaryKey = DcKey;
-						UserConfigTable.DefaultView.Sort = DcKey[0].ColumnName;
-					}else{
-						CreateUserConfigFile ();
-					}
+						DataColumn[] DcKeyus = new DataColumn[1];
+						DcKeyus[0] =UserConfigTable.Columns[0];
+						UserConfigTable.PrimaryKey = DcKeyus;
+						UserConfigTable.DefaultView.Sort = DcKeyus[0].ColumnName;
 				}
 				return true;
 			} catch (Exception ex) {
@@ -470,6 +467,11 @@ namespace horizonte
 		public string ParseConfigValue(string valor)
 		{
 			try {
+				if (valor.StartsWith("'")) 
+				{
+					valor = valor.Substring(1, valor.Length - 1);
+					return valor;
+				}
 				if (valor.Contains (@":\"))
 				{
 					return valor;
@@ -479,7 +481,7 @@ namespace horizonte
 				{
 					valor = valor.Replace (@"\",@"/");
 				}else{
-					if(!(valor.Contains("http") || valor.Contains("https")))
+					if(!(valor.Contains("http") || valor.Contains("https") || valor.Contains("ftp:")))
 					{
 						valor = valor.Replace (@"/",@"\");
 					}

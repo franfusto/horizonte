@@ -73,7 +73,7 @@ namespace horizonte
 		}
 		public static void AskRegister()
 		{
-			horizonte.hGestorModulo.AskRegister ();
+			//horizonte.hGestorModulo.AskRegister ();
 		}
 		public static void ShowWidget(string winname, string widget)
 		{

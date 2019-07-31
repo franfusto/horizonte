@@ -128,7 +128,8 @@ namespace horizonte
 					foreach (ZipEntry e in zip)
 					{
 						GtkDoPending();
-						e.Extract(RutaDestino);
+						e.Extract(RutaDestino,ExtractExistingFileAction.OverwriteSilently);
+
 					}
 				}
 

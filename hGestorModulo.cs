@@ -9,11 +9,11 @@ using Gtk;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Data;
-using DevOne.Security.Cryptography.BCrypt;
-using System.Net;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
+//using DevOne.Security.Cryptography.BCrypt;
+//using System.Net;
+//using System.Text;
+//using System.IO;
+//using System.Threading.Tasks;
 
 namespace horizonte
 {
@@ -112,223 +112,223 @@ namespace horizonte
 			{return coreactive; }
 		}
 
-		public static void AskRegister()
-		{
-			try {
-				string configroup;
-				string configkey;
-				ConfigTool.GetValor ("HKEY", out configkey, out configroup);
-				string configcert;
-				ConfigTool.GetValor ("HCERT", out configcert, out configroup);
-				string configname;
-				ConfigTool.GetValor ("HNAME", out configname, out configroup);
-				string hregsrv;
-				ConfigTool.GetValor ("HREGSRV", out hregsrv, out configroup);
-				string val1 = System.Environment.UserName ;
-				string val2 = System.Environment.MachineName;
-				string val3 = System.Environment.OSVersion.ToString();
-				string val4 = ModKey;
-				//HREGSRV
-				var request = (HttpWebRequest)WebRequest.Create(hregsrv);
-				var postData = "a1=" + configkey;
-				postData += "&a2=" + configname;
-				postData += "&a3=" + val1;
-				postData += "&a4=" + val2;
-				postData += "&a5=" + val3;
-				postData += "&a6=" + val4;
+		//public static void AskRegister()
+		//{
+		//	try {
+		//		string configroup;
+		//		string configkey;
+		//		ConfigTool.GetValor ("HKEY", out configkey, out configroup);
+		//		string configcert;
+		//		ConfigTool.GetValor ("HCERT", out configcert, out configroup);
+		//		string configname;
+		//		ConfigTool.GetValor ("HNAME", out configname, out configroup);
+		//		string hregsrv;
+		//		ConfigTool.GetValor ("HREGSRV", out hregsrv, out configroup);
+		//		string val1 = System.Environment.UserName ;
+		//		string val2 = System.Environment.MachineName;
+		//		string val3 = System.Environment.OSVersion.ToString();
+		//		string val4 = ModKey;
+		//		//HREGSRV
+		//		var request = (HttpWebRequest)WebRequest.Create(hregsrv);
+		//		var postData = "a1=" + configkey;
+		//		postData += "&a2=" + configname;
+		//		postData += "&a3=" + val1;
+		//		postData += "&a4=" + val2;
+		//		postData += "&a5=" + val3;
+		//		postData += "&a6=" + val4;
 
-				var data = Encoding.ASCII.GetBytes(postData);
-				request.Method = "POST";
-				request.ContentType = "application/x-www-form-urlencoded";
-				request.ContentLength = data.Length;
-				using (var stream = request.GetRequestStream())
-				{
-					stream.Write(data, 0, data.Length);
-				}
-				var response = (HttpWebResponse)request.GetResponse();
-				var responseString = new StreamReader(response.GetResponseStream())
-					.ReadToEnd().Trim();
-			//TODO: Validar el texto devuelto para ver si encaja con el formato del hash.......
+		//		var data = Encoding.ASCII.GetBytes(postData);
+		//		request.Method = "POST";
+		//		request.ContentType = "application/x-www-form-urlencoded";
+		//		request.ContentLength = data.Length;
+		//		using (var stream = request.GetRequestStream())
+		//		{
+		//			stream.Write(data, 0, data.Length);
+		//		}
+		//		var response = (HttpWebResponse)request.GetResponse();
+		//		var responseString = new StreamReader(response.GetResponseStream())
+		//			.ReadToEnd().Trim();
+		//	//TODO: Validar el texto devuelto para ver si encaja con el formato del hash.......
 
-				Console.WriteLine(Tr.Catalog.GetString ("RECIBIMOS DEL REGISTRO WEB:##")  +
-					Environment.NewLine +  responseString + Environment.NewLine +"##");
-				hGestorModulo.ConfigTool.SetValue("HCERT",responseString,"");
-				hGestorModulo.ConfigTool.SaveConfig();
-				Console.WriteLine(responseString);
-				Console.WriteLine(Tr.Catalog.GetString("Se ha registrado el programa, reinicie la aplicación"));
-				Quit();
+		//		Console.WriteLine(Tr.Catalog.GetString ("RECIBIMOS DEL REGISTRO WEB:##")  +
+		//			Environment.NewLine +  responseString + Environment.NewLine +"##");
+		//		hGestorModulo.ConfigTool.SetValue("HCERT",responseString,"");
+		//		hGestorModulo.ConfigTool.SaveConfig();
+		//		Console.WriteLine(responseString);
+		//		Console.WriteLine(Tr.Catalog.GetString("Se ha registrado el programa, reinicie la aplicación"));
+		//		Quit();
 
-			} catch (Exception ex) {
-				horizonte.LogEx.CatchEx (ex,"AskRegister","");
-				Console.WriteLine(Tr.Catalog.GetString("No se ha podido registrar el programa"));
-				Quit();
-			}
+		//	} catch (Exception ex) {
+		//		horizonte.LogEx.CatchEx (ex,"AskRegister","");
+		//		Console.WriteLine(Tr.Catalog.GetString("No se ha podido registrar el programa"));
+		//		Quit();
+		//	}
 
-		}
+		//}
 		public static void Quit()
 		{
 			Disposing(null, EventArgs.Empty);
 			Environment.Exit(1);
 		}
-		private static void validate()
-		{
-			try {
+		//private static void validate()
+		//{
+		//	try {
 
-				coreactive = false;
-				string configkey;
-				string configroup;
-				if (!ConfigTool.GetValor("HKEY",out configkey,out configroup)){
-					Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA LA CLAVE DE RIEGISTRO. SALIENDO...."));
-					coreactive = false;
-				}
-				string configcert;
-				if (!ConfigTool.GetValor("HCERT",out configcert,out configroup)){
-					Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL CERTIFICADO DE LA APLICACIÓN. SALIENDO...."));
-					coreactive = false;
-				}
-				if (string.IsNullOrEmpty(configcert))
-				{
-					Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL CERTIFICADO DE LA APLICACIÓN. SALIENDO...."));
-					coreactive = false;					
-				}
-				string configname;
-				if (!ConfigTool.GetValor("HNAME",out configname,out configroup)){
-					Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL NOMBRE DE REGISTRO. SALIENDO...."));
-					coreactive = false;
-				}
-				string modkey;
-				if (!ConfigTool.GetValor("MODKEY",out modkey,out modkey)){
-					Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA LA CLAVE DE MÓDULO SALIENDO...."));
-					coreactive = false;
-				}
-
-
-				////
-				string val1 = System.Environment.UserName ;
-				string val2 = System.Environment.MachineName;
-				string val3 = System.Environment.OSVersion.ToString();
-				ModKey = OrderModKey (modkey); //comprobamos la lista de modulos ordenamos y establedemos ModKeyList
-				string val4 = ModKey ;
-				string step0 = configkey+val1+val2+val3+configname + val4;
-				string step1 = step0.Trim ();
-				string hpass = step1.ToUpper ();
+		//		coreactive = false;
+		//		string configkey;
+		//		string configroup;
+		//		if (!ConfigTool.GetValor("HKEY",out configkey,out configroup)){
+		//			Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA LA CLAVE DE RIEGISTRO. SALIENDO...."));
+		//			coreactive = false;
+		//		}
+		//		string configcert;
+		//		if (!ConfigTool.GetValor("HCERT",out configcert,out configroup)){
+		//			Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL CERTIFICADO DE LA APLICACIÓN. SALIENDO...."));
+		//			coreactive = false;
+		//		}
+		//		if (string.IsNullOrEmpty(configcert))
+		//		{
+		//			Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL CERTIFICADO DE LA APLICACIÓN. SALIENDO...."));
+		//			coreactive = false;					
+		//		}
+		//		string configname;
+		//		if (!ConfigTool.GetValor("HNAME",out configname,out configroup)){
+		//			Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA EL NOMBRE DE REGISTRO. SALIENDO...."));
+		//			coreactive = false;
+		//		}
+		//		string modkey;
+		//		if (!ConfigTool.GetValor("MODKEY",out modkey,out modkey)){
+		//			Console.WriteLine(Tr.Catalog.GetString ("NO SE ENCUENTRA LA CLAVE DE MÓDULO SALIENDO...."));
+		//			coreactive = false;
+		//		}
 
 
-
-				if (BCryptHelper.CheckPassword (hpass, configcert)) {
-					Console.WriteLine (Tr.Catalog.GetString ("### NUCLEO REGISTRADO ####"));
-					coreactive = true;
-				} else {
-					Console.WriteLine (Tr.Catalog.GetString ("*******PROGRAMA NO REGISTRADO*********"));
-					int lombriz = CheckLombriz ();
-					if (lombriz == 0)
-					{
-						AskRegister ();
-						coreactive = false;
-					}else
-					{
-						ExecLeft = lombriz;
-						Console.WriteLine ("### DEMO: " + lombriz.ToString ()  + Tr.Catalog.GetString (" EJECUCIONES DISPONIBLES ####"));
-						coreactive = true;
-					}
-					//throw new Exception("PROGRAMA NO REGISTRADO");
-
-				}
-			} catch (Exception ex) {
-				//Util.AlertMessage("ERROR DE REGISTRO");
-				Console.WriteLine (Tr.Catalog.GetString ("*******ERROR DE REGISTRO*********"));
-				horizonte.LogEx.CatchEx (ex,"Validate","");
-				throw new Exception(Tr.Catalog.GetString ("PROGRAMA NO REGISTRADO"));
-				coreactive = false;
-				//Application.Quit ();
-			}
+		//		////
+		//		string val1 = System.Environment.UserName ;
+		//		string val2 = System.Environment.MachineName;
+		//		string val3 = System.Environment.OSVersion.ToString();
+		//		ModKey = OrderModKey (modkey); //comprobamos la lista de modulos ordenamos y establedemos ModKeyList
+		//		string val4 = ModKey ;
+		//		string step0 = configkey+val1+val2+val3+configname + val4;
+		//		string step1 = step0.Trim ();
+		//		string hpass = step1.ToUpper ();
 
 
 
-		}
+		//		if (BCryptHelper.CheckPassword (hpass, configcert)) {
+		//			Console.WriteLine (Tr.Catalog.GetString ("### NUCLEO REGISTRADO ####"));
+		//			coreactive = true;
+		//		} else {
+		//			Console.WriteLine (Tr.Catalog.GetString ("*******PROGRAMA NO REGISTRADO*********"));
+		//			int lombriz = CheckLombriz ();
+		//			if (lombriz == 0)
+		//			{
+		//				AskRegister ();
+		//				coreactive = false;
+		//			}else
+		//			{
+		//				ExecLeft = lombriz;
+		//				Console.WriteLine ("### DEMO: " + lombriz.ToString ()  + Tr.Catalog.GetString (" EJECUCIONES DISPONIBLES ####"));
+		//				coreactive = true;
+		//			}
+		//			//throw new Exception("PROGRAMA NO REGISTRADO");
+
+		//		}
+		//	} catch (Exception ex) {
+		//		//Util.AlertMessage("ERROR DE REGISTRO");
+		//		Console.WriteLine (Tr.Catalog.GetString ("*******ERROR DE REGISTRO*********"));
+		//		horizonte.LogEx.CatchEx (ex,"Validate","");
+		//		throw new Exception(Tr.Catalog.GetString ("PROGRAMA NO REGISTRADO"));
+		//		coreactive = false;
+		//		//Application.Quit ();
+		//	}
+
+
+
+		//}
 
 		#endregion
-		private static List<string> ModKeyList = new List<string>();
-		private static string OrderModKey (string ModKey)
-		{
-			try {
-				ModKeyList.Clear ();
-				if(ModKey==string.Empty)
-					return ModKey;
-				if(ModKey.Length % 3 != 0)
-					return string.Empty;
-				int nmod = ModKey.Length / 3;
-				int start =0;
-				string key="";
-				for (int modnumb = 0; modnumb < nmod; modnumb++) {
-					start = modnumb * 3;
-					key = ModKey.Substring (start,3) ;
-					ModKeyList.Add (key);
-				}
-				ModKeyList.Sort ();
-				string orderkeylist = string.Empty;
-				foreach (string ordkey in ModKeyList) {
-					orderkeylist += ordkey;
-				}
-				return orderkeylist;
-			} catch (Exception ex) {
-				LogEx.CatchEx (ex, "OrderModKey");
-				return string.Empty;
-			}
-		}
-		private static int CheckLombriz()
-		{
-			try {
+		//private static List<string> ModKeyList = new List<string>();
+		//private static string OrderModKey (string ModKey)
+		//{
+		//	try {
+		//		ModKeyList.Clear ();
+		//		if(ModKey==string.Empty)
+		//			return ModKey;
+		//		if(ModKey.Length % 3 != 0)
+		//			return string.Empty;
+		//		int nmod = ModKey.Length / 3;
+		//		int start =0;
+		//		string key="";
+		//		for (int modnumb = 0; modnumb < nmod; modnumb++) {
+		//			start = modnumb * 3;
+		//			key = ModKey.Substring (start,3) ;
+		//			ModKeyList.Add (key);
+		//		}
+		//		ModKeyList.Sort ();
+		//		string orderkeylist = string.Empty;
+		//		foreach (string ordkey in ModKeyList) {
+		//			orderkeylist += ordkey;
+		//		}
+		//		return orderkeylist;
+		//	} catch (Exception ex) {
+		//		LogEx.CatchEx (ex, "OrderModKey");
+		//		return string.Empty;
+		//	}
+		//}
+		//private static int CheckLombriz()
+		//{
+		//	try {
 
-				string filelock = "horizonte.bmp";
+		//		string filelock = "horizonte.bmp";
 
-				if (!File.Exists(filelock))
-					return 0;
-				DateTime lastwrite = File.GetLastWriteTime(filelock);
-				DateTime creationtime = File.GetCreationTime(filelock);
-				DateTime lastaccesstime =  File.GetLastAccessTime(filelock);
-				StreamReader sreader = new StreamReader (filelock);
-				BinaryReader b = new BinaryReader (sreader.BaseStream);
-				byte[] bit = b.ReadBytes ((int)sreader.BaseStream.Length);
-
-
-				byte dig1 = bit [300];
-				byte dig2 = bit [301];
-
-				int curintcount = 0;
-				string curstrcount = (char)dig1 +"" + (char)dig2;
-				int.TryParse (curstrcount,out curintcount);
-				//
-				//curintcount = 101;
-				//
-				int newintcount = curintcount - 1;
-				if (newintcount <=0)
-					return 0;
-				string newstrcount = newintcount.ToString ();
-				char[] newchar = newstrcount.ToCharArray ();
-				if (newchar.Length == 1)
-				{
-					bit[300] = (byte)'0';
-					bit[301] = (byte)newchar[0];
-				}else{
-					bit [300] = (byte)newchar[0]; 
-					bit [301] = (byte)newchar[1];
-				}
-				sreader.Close ();
-				File.WriteAllBytes (filelock, bit);
-
-				File.SetLastWriteTime(filelock,lastwrite);
-				File.SetCreationTime(filelock,creationtime);
-				File.SetLastAccessTime(filelock,lastaccesstime);
-				return newintcount;    
+		//		if (!File.Exists(filelock))
+		//			return 0;
+		//		DateTime lastwrite = File.GetLastWriteTime(filelock);
+		//		DateTime creationtime = File.GetCreationTime(filelock);
+		//		DateTime lastaccesstime =  File.GetLastAccessTime(filelock);
+		//		StreamReader sreader = new StreamReader (filelock);
+		//		BinaryReader b = new BinaryReader (sreader.BaseStream);
+		//		byte[] bit = b.ReadBytes ((int)sreader.BaseStream.Length);
 
 
-			} catch (Exception ex) {
-				horizonte.LogEx.CatchEx (ex,"Lombriz","");
-				return 0;
-			}
+		//		byte dig1 = bit [300];
+		//		byte dig2 = bit [301];
 
-		}
+		//		int curintcount = 0;
+		//		string curstrcount = (char)dig1 +"" + (char)dig2;
+		//		int.TryParse (curstrcount,out curintcount);
+		//		//
+		//		//curintcount = 101;
+		//		//
+		//		int newintcount = curintcount - 1;
+		//		if (newintcount <=0)
+		//			return 0;
+		//		string newstrcount = newintcount.ToString ();
+		//		char[] newchar = newstrcount.ToCharArray ();
+		//		if (newchar.Length == 1)
+		//		{
+		//			bit[300] = (byte)'0';
+		//			bit[301] = (byte)newchar[0];
+		//		}else{
+		//			bit [300] = (byte)newchar[0]; 
+		//			bit [301] = (byte)newchar[1];
+		//		}
+		//		sreader.Close ();
+		//		File.WriteAllBytes (filelock, bit);
+
+		//		File.SetLastWriteTime(filelock,lastwrite);
+		//		File.SetCreationTime(filelock,creationtime);
+		//		File.SetLastAccessTime(filelock,lastaccesstime);
+		//		return newintcount;    
+
+
+		//	} catch (Exception ex) {
+		//		horizonte.LogEx.CatchEx (ex,"Lombriz","");
+		//		return 0;
+		//	}
+
+		//}
 
 
 		public static  void LoadConfig ()
